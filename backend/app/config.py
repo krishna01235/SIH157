@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +18,14 @@ class Settings(BaseSettings):
     max_records_per_submission: int = Field(default=10_000, gt=0)
     demo_enabled: bool = True
     frontend_dist: Path = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+
+    @model_validator(mode="after")
+    def validate_limits(self) -> "Settings":
+        if self.max_request_bytes <= self.max_upload_bytes:
+            raise ValueError("MAX_REQUEST_BYTES must exceed MAX_UPLOAD_BYTES")
+        if not self.allowed_host_list or not self.allowed_origin_list:
+            raise ValueError("ALLOWED_HOSTS and ALLOWED_ORIGINS cannot be empty")
+        return self
 
     @property
     def allowed_host_list(self) -> list[str]:

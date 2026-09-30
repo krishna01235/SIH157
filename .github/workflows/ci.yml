@@ -43,3 +43,25 @@ jobs:
         working-directory: frontend
         env:
           DATABASE_URL: sqlite:////tmp/sat-sa-ci/app.db
+      - name: Build and start packaged application
+        run: |
+          docker compose build
+          docker compose up --no-build --pull never -d
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:18000/ready; then exit 0; fi
+            sleep 2
+          done
+          docker compose logs app
+          exit 1
+        env:
+          HOST_PORT: '18000'
+          ALLOWED_ORIGINS: http://127.0.0.1:18000
+      - name: Run browser workflow against packaged application
+        run: npm run test:e2e
+        working-directory: frontend
+        env:
+          CI: ''
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:18000
+      - name: Show packaged application logs on failure
+        if: failure()
+        run: docker compose logs app

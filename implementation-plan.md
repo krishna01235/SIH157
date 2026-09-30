@@ -1,8 +1,8 @@
 # SAT-SA / NIGRANI-SA — MVP Implementation Plan
 
-Status: planning only. No application implementation or Git commits are part of this task.
+Status: the MVP described here has been implemented. See the README for current commands and `docs/verification.md` for measured checks.
 
-This document is the implementation guide for the MVP. The existing `SIH26157_SAT-SA_Implementation_Plan_and_PPT.md` remains the broader product and presentation reference. All functionality, tests, deployment commands, and performance figures below are proposed work or acceptance targets, not claims about an existing application.
+This document records the MVP scope, technical decisions, and original acceptance targets. The existing `SIH26157_SAT-SA_Implementation_Plan_and_PPT.md` remains the broader product and presentation reference. Use the README and verification notes for the implemented behavior and measured results.
 
 ## 1. Project Overview
 
@@ -14,7 +14,7 @@ This document is the implementation guide for the MVP. The existing `SIH26157_SA
 
 ### Repository and source analysis
 
-The repository currently contains:
+At the planning baseline, the repository contained:
 
 | File / state | Finding | Consequence for this plan |
 |---|---|---|

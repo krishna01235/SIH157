@@ -20,3 +20,9 @@ test-results
 *.sqlite3
 *.sqlite3-*
 *.log
+problem_Statement.txt
+SIH26157_*
+implementation-plan.md
+README.md
+docs
+.github

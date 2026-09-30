@@ -4,10 +4,11 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.staticfiles import StaticFiles
 
 from app.api.assessment import router as assessment_router
 from app.api.demo import router as demo_router
@@ -93,6 +94,24 @@ def create_app() -> FastAPI:
             return JSONResponse({"status": "ready"})
         except SQLAlchemyError:
             return JSONResponse({"status": "unavailable"}, status_code=503)
+
+    index = settings.frontend_dist / "index.html"
+    if index.is_file():
+        app.mount("/assets", StaticFiles(directory=settings.frontend_dist / "assets"), name="assets")
+        app.mount("/templates", StaticFiles(directory=settings.frontend_dist / "templates"), name="templates")
+
+        def serve_index() -> FileResponse:
+            return FileResponse(index, headers={
+                "Cache-Control": "no-store",
+                "X-Content-Type-Options": "nosniff",
+                "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; "
+                "img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; "
+                "frame-ancestors 'none'",
+            })
+
+        app.add_api_route("/", serve_index, methods=["GET"], include_in_schema=False)
+        app.add_api_route("/submissions/new", serve_index, methods=["GET"], include_in_schema=False)
+        app.add_api_route("/submissions/{submission_id}", serve_index, methods=["GET"], include_in_schema=False)
 
     app.add_middleware(RequestSizeLimit, max_bytes=settings.max_request_bytes)
     return app

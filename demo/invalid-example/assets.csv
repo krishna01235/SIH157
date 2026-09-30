@@ -1,0 +1,2 @@
+asset_id,label,criticality,expected_in_scope
+AST-X1,Gateway,critical,true

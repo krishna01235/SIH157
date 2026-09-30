@@ -1,0 +1,4 @@
+asset_id,label,criticality,expected_in_scope
+AST-B1,Core switch,critical,true
+AST-B2,Authentication server,critical,true
+AST-B3,Gateway,critical,true

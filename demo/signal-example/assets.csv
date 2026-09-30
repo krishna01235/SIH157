@@ -1,0 +1,7 @@
+asset_id,label,criticality,expected_in_scope
+AST-01,Grid gateway,critical,true
+AST-02,Dispatch controller,critical,true
+AST-03,Operations server,critical,true
+AST-04,Remote substation,critical,true
+AST-05,Office workstation,high,true
+AST-06,Retired controller,critical,false

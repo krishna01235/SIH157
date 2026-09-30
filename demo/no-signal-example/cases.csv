@@ -1,0 +1,5 @@
+case_id,severity,status,opened_at,closed_at,investigation_count
+CASE-B1,high,closed,2026-01-03T00:00:00Z,2026-01-03T00:10:00Z,2
+CASE-B2,critical,closed,2026-01-03T01:00:00Z,2026-01-03T01:05:00Z,1
+CASE-B3,high,closed,2026-01-03T02:00:00Z,2026-01-03T02:30:00Z,3
+CASE-B4,low,closed,2026-01-03T03:00:00Z,2026-01-03T03:01:00Z,0

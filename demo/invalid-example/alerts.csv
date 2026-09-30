@@ -1,0 +1,2 @@
+alert_id,asset_id,case_id,detected_at,severity,category
+ALT-X1,AST-X9,CASE-X1,2026-01-03T01:00:00Z,high,malware

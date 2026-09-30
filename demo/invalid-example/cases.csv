@@ -1,0 +1,2 @@
+case_id,severity,status,opened_at,closed_at,investigation_count
+CASE-X1,high,closed,2026-01-03T01:00:00Z,2026-01-03T00:00:00Z,0

@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,18 +11,21 @@ class Settings(BaseSettings):
     app_env: str = "local"
     database_url: str = "sqlite:///./data/sat-sa.db"
     log_level: str = "INFO"
-    allowed_hosts: list[str] = ["localhost", "127.0.0.1"]
-    allowed_origins: list[str] = ["http://localhost:8000", "http://127.0.0.1:8000"]
+    allowed_hosts: str = "localhost,127.0.0.1"
+    allowed_origins: str = "http://localhost:8000,http://127.0.0.1:8000,http://localhost:5173,http://127.0.0.1:5173"
     max_upload_bytes: int = Field(default=10_485_760, gt=0)
     max_request_bytes: int = Field(default=11_534_336, gt=0)
     max_records_per_submission: int = Field(default=10_000, gt=0)
     demo_enabled: bool = True
     frontend_dist: Path = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
-    @field_validator("allowed_hosts", "allowed_origins", mode="before")
-    @classmethod
-    def split_csv(cls, value: object) -> object:
-        return [item.strip() for item in value.split(",") if item.strip()] if isinstance(value, str) else value
+    @property
+    def allowed_host_list(self) -> list[str]:
+        return [item.strip() for item in self.allowed_hosts.split(",") if item.strip()]
+
+    @property
+    def allowed_origin_list(self) -> list[str]:
+        return [item.strip() for item in self.allowed_origins.split(",") if item.strip()]
 
 
 @lru_cache

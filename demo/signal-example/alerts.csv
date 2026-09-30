@@ -1,0 +1,13 @@
+alert_id,asset_id,case_id,detected_at,severity,category
+ALT-01,AST-01,CASE-01,2026-01-03T00:00:00Z,high,malware
+ALT-02,AST-02,CASE-02,2026-01-03T01:00:00Z,critical,unauthorized access
+ALT-03,AST-03,CASE-03,2026-01-03T02:00:00Z,high,credential use
+ALT-04,AST-01,CASE-04,2026-01-03T03:00:00Z,critical,malware
+ALT-05,AST-02,CASE-05,2026-01-03T04:00:00Z,high,network anomaly
+ALT-06,AST-03,CASE-06,2026-01-03T05:00:00Z,high,credential use
+ALT-07,AST-05,CASE-07,2026-01-03T06:00:00Z,low,policy event
+ALT-08,AST-06,CASE-08,2026-01-03T07:00:00Z,high,network anomaly
+ALT-09,AST-01,,2026-01-04T08:00:00Z,medium,configuration
+ALT-10,AST-02,,2026-01-04T09:00:00Z,medium,authentication
+ALT-11,AST-03,,2026-01-04T10:00:00Z,high,malware
+ALT-12,AST-05,,2026-01-04T11:00:00Z,low,policy event

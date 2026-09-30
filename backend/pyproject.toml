@@ -25,6 +25,7 @@ package = false
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+lint.ignore = ["B008"] # FastAPI uses Depends, File, Form, and Query in parameter defaults.
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

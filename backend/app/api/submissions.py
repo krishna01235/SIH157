@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, File, Form, Query, Response, UploadFile
 from pydantic import BaseModel
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.data.database import get_session
 from app.data.models import Entity, Submission
 from app.errors import AppError
+from app.services.assessment import newest_run, overview_counts
 from app.services.imports import FileInput, parse_submission
 from app.services.submissions import (
     create_entity,
@@ -46,11 +47,7 @@ def add_entity(body: EntityInput, session: Session = Depends(get_session)) -> di
 
 @router.get("/overview")
 def overview(session: Session = Depends(get_session)) -> dict:
-    return {
-        "submissions": session.scalar(select(func.count(Submission.id))) or 0,
-        "completed_assessments": 0,
-        "awaiting_review": 0,
-    }
+    return overview_counts(session)
 
 
 @router.get("/submissions")
@@ -95,4 +92,6 @@ def submission_detail(submission_id: str, session: Session = Depends(get_session
     submission = session.get(Submission, submission_id)
     if submission is None:
         raise AppError("submission_not_found", "Submission not found.", 404)
-    return describe_submission(session, submission)
+    run = newest_run(session, submission.id)
+    return {**describe_submission(session, submission), "latest_run_id": run.id if run else None,
+            "latest_run_status": run.status if run else None}

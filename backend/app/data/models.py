@@ -133,6 +133,7 @@ class Alert(Base):
         ForeignKeyConstraint(["asset_id", "submission_id"], ["assets.id", "assets.submission_id"]),
         ForeignKeyConstraint(["case_id", "submission_id"], ["cases.id", "cases.submission_id"]),
         UniqueConstraint("submission_id", "source_id", name="uq_alert_source_id"),
+        Index("ix_alert_id_submission", "id", "submission_id", unique=True),
         Index("ix_alert_submission_asset_detected", "submission_id", "asset_id", "detected_at"),
     )
 
@@ -147,3 +148,81 @@ class Alert(Base):
     severity: Mapped[str] = mapped_column(String(8), nullable=False)
     category: Mapped[str] = mapped_column(String(100), nullable=False)
     raw_fields: Mapped[dict] = mapped_column(JSON, nullable=False)
+
+
+class AnalysisRun(Base):
+    __tablename__ = "analysis_runs"
+    __table_args__ = (
+        UniqueConstraint("submission_id", "engine_version", "config_hash", name="uq_run_input_version"),
+        Index("ix_run_submission_created", "submission_id", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    submission_id: Mapped[str] = mapped_column(ForeignKey("submissions.id"), nullable=False)
+    engine_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    config_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    configuration: Mapped[dict] = mapped_column(JSON, nullable=False)
+    input_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(12), nullable=False)
+    error_code: Mapped[str | None] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now_utc)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CheckResult(Base):
+    __tablename__ = "check_results"
+    __table_args__ = (UniqueConstraint("run_id", "rule_id", name="uq_result_rule"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    run_id: Mapped[str] = mapped_column(ForeignKey("analysis_runs.id"), nullable=False)
+    rule_id: Mapped[str] = mapped_column(String(20), nullable=False)
+    rule_version: Mapped[str] = mapped_column(String(10), nullable=False)
+    title: Mapped[str] = mapped_column(String(120), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    evaluated_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    affected_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    unknown_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    excluded_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    parameters: Mapped[dict] = mapped_column(JSON, nullable=False)
+    reason: Mapped[str | None] = mapped_column(String(300))
+    rationale: Mapped[str] = mapped_column(String(1000), nullable=False)
+
+
+class Finding(Base):
+    __tablename__ = "findings"
+    __table_args__ = (
+        UniqueConstraint("check_result_id", name="uq_finding_result"),
+        Index("ix_finding_run_status", "run_id", "review_status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    run_id: Mapped[str] = mapped_column(ForeignKey("analysis_runs.id"), nullable=False)
+    check_result_id: Mapped[str] = mapped_column(ForeignKey("check_results.id"), nullable=False)
+    title: Mapped[str] = mapped_column(String(120), nullable=False)
+    rationale: Mapped[str] = mapped_column(String(1000), nullable=False)
+    review_status: Mapped[str] = mapped_column(String(20), nullable=False, default="needs_review")
+    review_note: Mapped[str] = mapped_column(String(2000), nullable=False, default="")
+    revision: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now_utc)
+
+
+class FindingEvidence(Base):
+    __tablename__ = "finding_evidence"
+    __table_args__ = (
+        ForeignKeyConstraint(["asset_id", "submission_id"], ["assets.id", "assets.submission_id"]),
+        ForeignKeyConstraint(["case_id", "submission_id"], ["cases.id", "cases.submission_id"]),
+        ForeignKeyConstraint(["alert_id", "submission_id"], ["alerts.id", "alerts.submission_id"]),
+        CheckConstraint(
+            "(asset_id IS NOT NULL) + (case_id IS NOT NULL) + (alert_id IS NOT NULL) = 1",
+            name="ck_evidence_one_target",
+        ),
+        Index("ix_evidence_finding", "finding_id"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    finding_id: Mapped[str] = mapped_column(ForeignKey("findings.id"), nullable=False)
+    submission_id: Mapped[str] = mapped_column(ForeignKey("submissions.id"), nullable=False)
+    role: Mapped[str] = mapped_column(String(12), nullable=False, default="affected")
+    asset_id: Mapped[str | None] = mapped_column(String(36))
+    case_id: Mapped[str | None] = mapped_column(String(36))
+    alert_id: Mapped[str | None] = mapped_column(String(36))

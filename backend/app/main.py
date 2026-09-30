@@ -8,6 +8,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from app.api.assessment import router as assessment_router
+from app.api.demo import router as demo_router
 from app.api.submissions import router as submission_router
 from app.config import get_settings
 from app.data.database import get_engine
@@ -30,6 +32,8 @@ def create_app() -> FastAPI:
     app = FastAPI(title="NIGRANI-SA API", docs_url=None, redoc_url=None)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_host_list)
     app.include_router(submission_router)
+    app.include_router(assessment_router)
+    app.include_router(demo_router)
 
     @app.middleware("http")
     async def request_context(request: Request, call_next):  # type: ignore[no-untyped-def]

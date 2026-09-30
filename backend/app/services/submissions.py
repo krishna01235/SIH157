@@ -140,6 +140,8 @@ def describe_submission(session: Session, submission: Submission) -> dict:
 
 
 def list_submissions(session: Session, page: int, page_size: int, entity_id: str | None) -> dict:
+    from app.services.assessment import newest_run
+
     statement = select(Submission)
     if entity_id:
         statement = statement.where(Submission.entity_id == entity_id)
@@ -154,7 +156,9 @@ def list_submissions(session: Session, page: int, page_size: int, entity_id: str
             {"id": item.id, "entity_id": item.entity_id, "entity_name": names[item.entity_id],
              "label": item.label, "period_start": item.period_start, "period_end": item.period_end,
              "alert_coverage": item.alert_coverage, "synthetic": item.synthetic,
-             "created_at": item.created_at, "row_counts": item.validation_summary["row_counts"]}
+             "created_at": item.created_at, "row_counts": item.validation_summary["row_counts"],
+             "latest_run_id": (run.id if (run := newest_run(session, item.id)) else None),
+             "latest_run_status": run.status if run else None}
             for item in submissions
         ],
         "page": page, "page_size": page_size, "total": total,

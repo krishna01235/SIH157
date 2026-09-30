@@ -1,0 +1,1 @@
+"""Deterministic, pure assessment checks."""

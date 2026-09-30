@@ -1,0 +1,12 @@
+{
+  "signal-example": {
+    "MVP-EG-01": {"status": "signal", "evaluated": 6, "affected": 2, "unknown": 0, "excluded": 2, "evidence": ["CASE-01", "CASE-02"]},
+    "MVP-EG-02": {"status": "signal", "evaluated": 5, "affected": 1, "unknown": 1, "excluded": 2, "evidence": ["CASE-03"]},
+    "MVP-NS-01": {"status": "signal", "evaluated": 4, "affected": 1, "unknown": 0, "excluded": 2, "evidence": ["AST-04"]}
+  },
+  "no-signal-example": {
+    "MVP-EG-01": {"status": "no_signal", "evaluated": 3, "affected": 0, "unknown": 0, "excluded": 1, "evidence": []},
+    "MVP-EG-02": {"status": "no_signal", "evaluated": 3, "affected": 0, "unknown": 0, "excluded": 1, "evidence": []},
+    "MVP-NS-01": {"status": "no_signal", "evaluated": 3, "affected": 0, "unknown": 0, "excluded": 0, "evidence": []}
+  }
+}

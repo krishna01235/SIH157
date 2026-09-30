@@ -10,6 +10,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.assessment import router as assessment_router
 from app.api.demo import router as demo_router
+from app.api.review import router as review_router
 from app.api.submissions import router as submission_router
 from app.config import get_settings
 from app.data.database import get_engine
@@ -34,6 +35,7 @@ def create_app() -> FastAPI:
     app.include_router(submission_router)
     app.include_router(assessment_router)
     app.include_router(demo_router)
+    app.include_router(review_router)
 
     @app.middleware("http")
     async def request_context(request: Request, call_next):  # type: ignore[no-untyped-def]

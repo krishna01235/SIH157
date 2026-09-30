@@ -226,3 +226,18 @@ class FindingEvidence(Base):
     asset_id: Mapped[str | None] = mapped_column(String(36))
     case_id: Mapped[str | None] = mapped_column(String(36))
     alert_id: Mapped[str | None] = mapped_column(String(36))
+
+
+class ReviewEvent(Base):
+    __tablename__ = "review_events"
+    __table_args__ = (UniqueConstraint("finding_id", "revision", name="uq_review_event_revision"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    finding_id: Mapped[str] = mapped_column(ForeignKey("findings.id"), nullable=False)
+    prior_status: Mapped[str] = mapped_column(String(20), nullable=False)
+    new_status: Mapped[str] = mapped_column(String(20), nullable=False)
+    prior_note: Mapped[str] = mapped_column(String(2000), nullable=False)
+    new_note: Mapped[str] = mapped_column(String(2000), nullable=False)
+    operator_label: Mapped[str] = mapped_column(String(40), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now_utc)
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)

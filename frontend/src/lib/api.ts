@@ -63,6 +63,18 @@ export const api = {
   findings: (runId: string, page = 1, ruleId = '', status = '') => request<Page<FindingSummary>>(`/runs/${encodeURIComponent(runId)}/findings?${new URLSearchParams({ page: String(page), page_size: '25', ...(ruleId ? { rule_id: ruleId } : {}), ...(status ? { status } : {}) })}`),
   finding: (findingId: string) => request<FindingDetail>(`/findings/${encodeURIComponent(findingId)}`),
   evidence: (findingId: string, page = 1) => request<Page<Evidence>>(`/findings/${encodeURIComponent(findingId)}/evidence?page=${page}&page_size=25`),
+  saveReview: (findingId: string, status: ReviewStatus, note: string, expectedRevision: number) => request<FindingDetail>(`/findings/${encodeURIComponent(findingId)}/review`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status, note, expected_revision: expectedRevision }) }),
+  exportReview: async (runId: string, ruleId = '', status = '') => {
+    const params = new URLSearchParams({ ...(ruleId ? { rule_id: ruleId } : {}), ...(status ? { status } : {}) })
+    let response: Response
+    try { response = await fetch(`/api/v1/runs/${encodeURIComponent(runId)}/export.csv?${params}`) }
+    catch { throw new ApiError('network_error', 'Could not reach the server to export this review.', 0) }
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null)
+      throw new ApiError(payload?.error?.code ?? 'export_failed', payload?.error?.message ?? 'Export failed.', response.status)
+    }
+    return response.blob()
+  },
 }
 
 export const parseUtc = (value: string) => new Date(/[zZ]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}Z`)

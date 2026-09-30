@@ -264,8 +264,14 @@ def describe_finding(session: Session, finding: Finding) -> dict:
         "dataset_hash": run.input_hash, "config_hash": run.config_hash,
         "review_status": finding.review_status, "review_note": finding.review_note,
         "revision": finding.revision, "updated_at": finding.updated_at,
-        "history": [],
+        "history": review_history(session, finding.id),
     }
+
+
+def review_history(session: Session, finding_id: str) -> list[dict]:
+    from app.services.review import get_review_history
+
+    return get_review_history(session, finding_id)
 
 
 def evidence_page(session: Session, finding_id: str, page: int, page_size: int) -> dict:

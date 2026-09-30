@@ -29,3 +29,17 @@ jobs:
       - name: Typecheck, test, and build frontend
         run: npm run typecheck && npm test && npm run build
         working-directory: frontend
+      - name: Install browser for end-to-end tests
+        run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Migrate isolated end-to-end database
+        run: |
+          mkdir -p /tmp/sat-sa-ci
+          cd backend && .venv/bin/alembic upgrade head
+        env:
+          DATABASE_URL: sqlite:////tmp/sat-sa-ci/app.db
+      - name: Run real browser workflow
+        run: npm run test:e2e
+        working-directory: frontend
+        env:
+          DATABASE_URL: sqlite:////tmp/sat-sa-ci/app.db

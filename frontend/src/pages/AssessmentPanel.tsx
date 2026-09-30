@@ -90,7 +90,13 @@ export default function AssessmentPanel({ runId, submission }: { runId: string; 
   const findingId = params.get('finding')
   const lastFocus = useRef<HTMLElement | null>(null)
   function openFinding(id: string) { lastFocus.current = document.activeElement as HTMLElement; setParams({ finding: id }) }
-  function closeFinding() { setParams({}); window.setTimeout(() => lastFocus.current?.focus(), 0) }
+  function closeFinding() { setParams({}) }
+  useEffect(() => {
+    if (!findingId && lastFocus.current) {
+      const target = lastFocus.current
+      requestAnimationFrame(() => { if (target.isConnected) target.focus(); lastFocus.current = null })
+    }
+  }, [findingId])
   async function downloadExport() {
     setExporting(true)
     setExportError('')

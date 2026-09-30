@@ -8,6 +8,7 @@ from app.data.models import CheckResult, Entity, Finding, ReviewEvent, Submissio
 from app.errors import AppError
 from app.rules.checks import RULE_IDS
 from app.services.assessment import evidence_page, get_finding, get_run
+from app.services.mutations import exclusive_mutation
 
 REVIEW_STATUSES = {"needs_review", "confirmed", "dismissed", "needs_context"}
 EXPORT_COLUMNS = (
@@ -32,6 +33,14 @@ def get_review_history(session: Session, finding_id: str) -> list[dict]:
 
 
 def save_review(
+    session: Session, finding_id: str, status: str, note: str,
+    expected_revision: int,
+) -> Finding:
+    with exclusive_mutation():
+        return _save_review(session, finding_id, status, note, expected_revision)
+
+
+def _save_review(
     session: Session, finding_id: str, status: str, note: str,
     expected_revision: int,
 ) -> Finding:

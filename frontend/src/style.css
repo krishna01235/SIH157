@@ -118,4 +118,37 @@ a { color: inherit; text-decoration: none; }
 .finding-actions { display: flex; gap: 9px; align-items: center; }.export-button { min-height: 34px; padding: 7px 10px; }.export-error { padding: 9px 22px; background: #fff4f0; }
 .review-editor { background: #f5faf8; border: 1px solid #dbeee6; border-radius: 9px; padding: 15px; }.review-editor > p { color: #6d8980; font-size: 10px; line-height: 1.55; margin: 0 0 13px; }.review-fields { display: grid; gap: 11px; }.review-fields label { display: grid; gap: 6px; font-size: 10px; font-weight: 750; color: #3a5d59; }.review-fields select, .review-fields textarea { border: 1px solid #cddfdb; border-radius: 7px; padding: 9px 11px; background: white; color: #28454c; font-size: 11px; width: 100%; }.review-fields select:focus, .review-fields textarea:focus { outline: 3px solid #d3ede2; border-color: #3ca98e; }.review-fields textarea { resize: vertical; min-height: 62px; line-height: 1.5; }.review-save { margin-top: 12px; min-height: 35px; }.review-error { color: #a34c40; font-size: 10px; padding: 9px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }.review-saved { color: #298761; font-size: 10px; margin-top: 8px; display: flex; gap: 5px; align-items: center; }.provenance details { border-top: 1px solid #e7eded; margin-top: 14px; padding-top: 12px; }.provenance summary { cursor: pointer; color: #408674; font-size: 10px; font-weight: 700; }.history-item { border-left: 2px solid #d2e8de; padding: 7px 10px; margin: 9px 0; background: #f7faf9; }.history-item strong { display: block; font-size: 10px; color: #33534b; text-transform: capitalize; }.history-item span { font-size: 9px; color: #8fa39f; }.history-item p { font-size: 10px; color: #607c74; margin: 4px 0 0; overflow-wrap: anywhere; }
 .discard-banner { flex: 0 0 auto; border-top: 1px solid #efd7ce; background: #fff7f3; padding: 13px 22px; color: #9d5142; display: grid; gap: 4px; font-size: 10px; }.discard-banner strong { font-size: 11px; }.discard-banner > div { display: flex; justify-content: flex-end; gap: 8px; margin-top: 5px; }.discard-banner .button { min-height: 33px; padding: 6px 9px; }
+
+/* Keep explanations and source records readable during an extended review. */
+.empty-workspace p, .hero-copy p, .step-card p { font-size: 14px; }
+.check-preview-row span, .checks-footnote, .submission-row-main small,
+.drawer-section > p, .review-editor > p, .evidence-caveat,
+.record-highlight, .record-fields dd, .review-fields select, .review-fields textarea { font-size: 13px; }
+.review-fields label, .record-fields dt, .drawer-rule-strip,
+.record-foot, .drawer-section .parameter-line, .provenance p,
+.history-item span, .history-item p, .review-saved, .review-error,
+.discard-banner, .finding-empty, .pagination, .pagination button { font-size: 11px; }
+.review-fields select, .review-fields textarea { min-height: 42px; }
+
+/* Muted text remains legible on the light canvas and white cards. */
+.sidebar-footer { color: #a7c1c2; }
+.breadcrumb-root, .page-heading p, .overview-metrics span, .panel-count,
+.submission-row-main small, .check-preview-row span, .checks-footnote,
+.method-heading > span, .step-card p, .page-footer,
+.empty-workspace p, .flow-heading p, .form-panel-head p,
+.optional, .inline-note, .upload-step, .upload-filename,
+.coverage-option small, .aside-small, .stat-card > span,
+.stat-card small, .file-row span, .detail-copy > p,
+.coverage-note span, .state-panel { color: #526873; }
+.local-badge, .eyebrow, .panel-overline, .synthetic-chip,
+.form-section-number, .file-picker, .template-link, .aside-link,
+.text-button { color: #176c59; }
+.button-primary { background: #116c5b; }
+.button-primary:hover:not(:disabled) { background: #0d5d4f; }
+.step-number { color: #607783; }
+.back-link { color: #526873; }
+.aside-card li { color: #3e6358; }
+.drawer-rule-strip { color: #176c59; }
+.explanation-grid span, .drawer-section .parameter-line,
+.drawer-section-heading span, .review-editor > p { color: #526873; }
 @media (max-width: 580px) { .finding-panel .panel-head { align-items: flex-start; }.finding-actions { flex-direction: column; align-items: flex-end; }.export-button { white-space: nowrap; }.review-editor { padding: 12px; }.discard-banner { padding: 10px 14px; } }

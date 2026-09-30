@@ -5,9 +5,15 @@ from sqlalchemy.orm import Session
 from app.data.models import Alert, Asset, Case, Entity, SourceFile, Submission, new_id
 from app.errors import AppError
 from app.services.imports import ParsedSubmission
+from app.services.mutations import exclusive_mutation
 
 
 def create_entity(session: Session, name: str, sector: str | None = None) -> Entity:
+    with exclusive_mutation():
+        return _create_entity(session, name, sector)
+
+
+def _create_entity(session: Session, name: str, sector: str | None = None) -> Entity:
     clean_name = name.strip()
     clean_sector = sector.strip() if sector else None
     if not 1 <= len(clean_name) <= 120 or (clean_sector and len(clean_sector) > 80):
@@ -34,6 +40,13 @@ def get_entity(session: Session, entity_id: str) -> Entity:
 
 
 def import_submission(
+    session: Session, entity_id: str, parsed: ParsedSubmission, *, synthetic: bool = False,
+) -> tuple[Submission, bool]:
+    with exclusive_mutation():
+        return _import_submission(session, entity_id, parsed, synthetic=synthetic)
+
+
+def _import_submission(
     session: Session, entity_id: str, parsed: ParsedSubmission, *, synthetic: bool = False,
 ) -> tuple[Submission, bool]:
     get_entity(session, entity_id)

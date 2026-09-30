@@ -2,7 +2,6 @@ import hashlib
 import json
 import logging
 from datetime import UTC, datetime
-from threading import Lock
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -31,11 +30,9 @@ from app.rules.checks import (
     Dataset,
     evaluate,
 )
+from app.services.mutations import mutation_lock
 
 logger = logging.getLogger("sat_sa.assessment")
-mutation_lock = Lock()
-
-
 def aware(value: datetime | None) -> datetime | None:
     if value is None:
         return None

@@ -127,3 +127,15 @@ def test_failed_assessment_can_retry_without_partial_findings(client: TestClient
     assert retried.status_code == 201
     assert retried.json()["id"] == detail["latest_run_id"]
     assert retried.json()["finding_count"] == 3
+
+
+def test_mutations_return_conflict_when_another_write_is_active(client: TestClient):
+    from app.services.mutations import mutation_lock
+
+    assert mutation_lock.acquire(blocking=False)
+    try:
+        response = client.post("/api/v1/entities", json={"name": "Concurrent entity"})
+        assert response.status_code == 409
+        assert response.json()["error"]["code"] == "operation_in_progress"
+    finally:
+        mutation_lock.release()

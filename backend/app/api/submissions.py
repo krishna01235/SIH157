@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, File, Form, Query, Response, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
 
 from app.config import get_settings
 from app.data.database import get_session
@@ -75,13 +76,14 @@ async def add_submission(
         "alerts": await read_limited(alerts, settings.max_upload_bytes),
         "cases": await read_limited(cases, settings.max_upload_bytes),
     }
-    parsed = parse_submission(
+    parsed = await run_in_threadpool(
+        parse_submission,
         files=files, period_start_text=period_start, period_end_text=period_end,
         alert_coverage=alert_coverage, label=label,
         max_bytes=settings.max_upload_bytes,
         max_records=settings.max_records_per_submission,
     )
-    submission, reused = import_submission(session, entity_id, parsed)
+    submission, reused = await run_in_threadpool(import_submission, session, entity_id, parsed)
     if not reused:
         response.status_code = 201
     return {**describe_submission(session, submission), "reused": reused}
